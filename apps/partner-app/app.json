@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Kabadi Man Partner",
+    "slug": "kabadiman-partner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "kabadiman-partner",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D47A1"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.kabadiman.partner"
+    },
+    "android": {
+      "package": "com.kabadiman.partner",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D47A1",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-notifications",
+      "expo-image-picker",
+      "expo-document-picker",
+      "expo-location"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}
