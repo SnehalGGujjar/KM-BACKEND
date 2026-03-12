@@ -181,8 +181,14 @@ class AdminCustomerMessageView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create notification — will be fully wired in Phase 6
-        # For now, return success placeholder
+        # Create and send notification
+        from apps.notifications.tasks import send_notification_task
+        send_notification_task.delay(
+            "CUSTOMER", customer.id,
+            title, body,
+            "SYSTEM", None, customer.city_id,
+        )
+
         return Response({
             "success": True,
             "data": {"message": f"Notification sent to {customer.name}"},

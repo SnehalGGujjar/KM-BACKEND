@@ -7,13 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, Users, ShoppingCart, IndianRupee, Truck } from "lucide-react";
 
 interface DashboardStats {
-  orders_today: number;
-  orders_trend: string;
+  new_orders_today: number;
+  scheduled_today: number;
+  ongoing_now: number;
+  completed_today: number;
+  cancelled_today: number;
+  pending_invoices: number;
   active_partners: number;
-  partners_trend: string;
-  total_revenue: number;
-  revenue_trend: string;
-  completion_rate: number;
+  todays_revenue: number;
+  new_orders_trend: number;
+  completed_trend: number;
+  cancelled_trend: number;
 }
 
 export default function DashboardPage() {
@@ -35,15 +39,19 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error("Failed to fetch dashboard stats", error);
-        // Fallback for UI demonstration if backend isn't running
+        // Show empty stats when backend isn't running
         setStats({
-          orders_today: 145,
-          orders_trend: "+12.5%",
-          active_partners: 34,
-          partners_trend: "+2",
-          total_revenue: 12450.00,
-          revenue_trend: "+14.2%",
-          completion_rate: 94.5,
+          new_orders_today: 0,
+          scheduled_today: 0,
+          ongoing_now: 0,
+          completed_today: 0,
+          cancelled_today: 0,
+          pending_invoices: 0,
+          active_partners: 0,
+          todays_revenue: 0,
+          new_orders_trend: 0,
+          completed_trend: 0,
+          cancelled_trend: 0,
         });
       } finally {
         setIsLoading(false);
@@ -73,14 +81,14 @@ export default function DashboardPage() {
         {/* KPI 1: Orders */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Orders Today</CardTitle>
+            <CardTitle className="text-sm font-medium">New Orders Today</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.orders_today || 0}</div>
-            <p className="flex items-center text-xs text-green-600 mt-1">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
-              {stats?.orders_trend || "+0%"} from yesterday
+            <div className="text-2xl font-bold">{stats?.new_orders_today || 0}</div>
+            <p className={`flex items-center text-xs mt-1 ${(stats?.new_orders_trend || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {(stats?.new_orders_trend || 0) >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3" /> : <ArrowDownRight className="mr-1 h-3 w-3" />}
+              {stats?.new_orders_trend || 0}% from yesterday
             </p>
           </CardContent>
         </Card>
@@ -93,9 +101,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.active_partners || 0}</div>
-            <p className="flex items-center text-xs text-green-600 mt-1">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
-              {stats?.partners_trend || "+0"} this week
+            <p className="flex items-center text-xs text-muted-foreground mt-1">
+              Online & approved
             </p>
           </CardContent>
         </Card>
@@ -103,28 +110,28 @@ export default function DashboardPage() {
         {/* KPI 3: Revenue */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Platform Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
             <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{stats?.total_revenue || 0}</div>
-            <p className="flex items-center text-xs text-green-600 mt-1">
-              <ArrowUpRight className="mr-1 h-3 w-3" />
-              {stats?.revenue_trend || "+0%"} from yesterday
+            <div className="text-2xl font-bold">₹{stats?.todays_revenue || 0}</div>
+            <p className="flex items-center text-xs text-muted-foreground mt-1">
+              Commission earned today
             </p>
           </CardContent>
         </Card>
 
-        {/* KPI 4: Completion Rate */}
+        {/* KPI 4: Completed Today */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Completed Today</CardTitle>
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.completion_rate || 0}%</div>
-            <p className="flex items-center text-xs text-muted-foreground mt-1">
-              Of assigned orders
+            <div className="text-2xl font-bold">{stats?.completed_today || 0}</div>
+            <p className={`flex items-center text-xs mt-1 ${(stats?.completed_trend || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {(stats?.completed_trend || 0) >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3" /> : <ArrowDownRight className="mr-1 h-3 w-3" />}
+              {stats?.completed_trend || 0}% from yesterday
             </p>
           </CardContent>
         </Card>

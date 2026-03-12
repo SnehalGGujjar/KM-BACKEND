@@ -59,7 +59,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "id", "order_id", "customer", "partner", "city",
             "status", "pickup_date", "pickup_slot", "pickup_slot_start",
             "scrap_photos", "scrap_description",
-            "arrival_otp", "arrival_otp_verified",
+            "arrival_otp_verified",
             "rejection_reason", "cancelled_by", "cancellation_reason",
             "scrap_items", "rating",
             # TAT timestamps

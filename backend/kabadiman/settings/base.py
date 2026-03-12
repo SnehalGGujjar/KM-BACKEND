@@ -161,11 +161,8 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Kolkata"
 
 # ── CORS ─────────────────────────────────────────────
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:8081",
-]
+CORS_ALLOW_ALL_ORIGINS = True  # For local development demo purposes
+CORS_ALLOW_CREDENTIALS = True
 
 # ── OTP Provider ─────────────────────────────────────
 OTP_PROVIDER = os.environ.get("OTP_PROVIDER", "console")

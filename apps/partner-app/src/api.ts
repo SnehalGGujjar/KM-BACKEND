@@ -1,9 +1,22 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
-// Local Expo dev depending on platform
-const API_URL = Platform.OS === 'web' ? 'http://localhost:8000/api/v1' : 'http://10.0.2.2:8000/api/v1';
+// Get the local IP address of the machine running the Expo bundler
+const getHostUri = () => {
+  const hostUri = Constants.expoConfig?.hostUri || Constants.manifest?.hostUri;
+  if (hostUri) {
+    return hostUri.split(':')[0]; // Extract just the IP part without the port
+  }
+  return '192.168.153.1'; // Fallback to current detected IP
+};
+
+const DEV_IP = getHostUri();
+
+const API_URL = Platform.OS === 'web' 
+  ? 'http://localhost:8000/api/v1' 
+  : `http://${DEV_IP}:8000/api/v1`;
 
 export const api = axios.create({
   baseURL: API_URL,

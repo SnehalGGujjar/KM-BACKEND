@@ -6,6 +6,8 @@ Order lifecycle endpoints for customer, partner, and admin.
 import random
 import string
 
+from django.utils import timezone
+
 from django.db.models import Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -406,6 +408,10 @@ class PartnerSubmitScrapView(APIView):
         # Transition to AWAITING_INVOICE
         order.transition_to("AWAITING_INVOICE")
 
+        # Auto-generate invoice from scrap items
+        from apps.invoices.models import Invoice
+        Invoice.create_for_order(order)
+
         return Response({
             "success": True,
             "data": OrderDetailSerializer(order).data,
@@ -668,6 +674,38 @@ class AdminCreateOrderView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class AdminCompleteOrderView(APIView):
+    """POST /admin/orders/{order_id}/complete/ — Admin marks order as completed."""
+
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request, order_id):
+        try:
+            order = Order.objects.get(order_id=order_id, status="PAYMENT_PENDING")
+        except Order.DoesNotExist:
+            return Response(
+                {"success": False, "data": None, "error": "Order not found or not in PAYMENT_PENDING status"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        try:
+            order.transition_to(
+                "COMPLETED",
+                completed_at=timezone.now(),
+            )
+        except InvalidTransitionError as e:
+            return Response(
+                {"success": False, "data": None, "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response({
+            "success": True,
+            "data": OrderDetailSerializer(order).data,
+            "error": None,
+        })
 
 
 class AdminDashboardStatsView(APIView):

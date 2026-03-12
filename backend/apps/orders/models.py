@@ -38,13 +38,19 @@ VALID_TRANSITIONS = {
 
 def _generate_order_id(city_slug: str) -> str:
     """
-    Generate a city-prefixed order ID.
+    Generate a city-prefixed order ID with collision retry.
     Format: KM-{CITY_PREFIX}-{YEAR}-{RANDOM5}
     Example: KM-BEL-2024-48291
     """
     prefix = city_slug[:3].upper()
     year = datetime.now().year
-    random_part = "".join(random.choices(string.digits, k=5))
+    for _ in range(10):  # 10 retry attempts to avoid collision
+        random_part = "".join(random.choices(string.digits, k=5))
+        order_id = f"KM-{prefix}-{year}-{random_part}"
+        if not Order.objects.filter(order_id=order_id).exists():
+            return order_id
+    # Fallback: use longer random to virtually eliminate collision
+    random_part = "".join(random.choices(string.digits, k=8))
     return f"KM-{prefix}-{year}-{random_part}"
 
 
@@ -155,8 +161,8 @@ class Order(models.Model):
             "ARRIVED": "arrived_at",
             "COLLECTING": "otp_verified_at",
             "AWAITING_INVOICE": "scrap_submitted_at",
-            "PAYMENT_PENDING": "payment_confirmed_at",
-            "COMPLETED": "completed_at",
+            "PAYMENT_PENDING": "invoice_approved_at",
+            "COMPLETED": "payment_confirmed_at",
             "CANCELLED": "cancelled_at",
         }
 
